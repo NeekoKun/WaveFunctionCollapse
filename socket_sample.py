@@ -10,6 +10,8 @@ screen = pygame.display.set_mode(SIZE)
 
 wfc = WFC(7, 7)
 
+wfc.set_mode("sockets")
+
 wfc.assign_rules("blank", {"0 1": 0, "1 0": 0, "0 -1": 0, "-1 0": 0})
 wfc.assign_rules("top",   {"0 1": 1, "1 0": 0, "0 -1": 1, "-1 0": 1})
 wfc.assign_rules("right", {"0 1": 1, "1 0": 1, "0 -1": 0, "-1 0": 1})
