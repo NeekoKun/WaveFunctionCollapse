@@ -1,103 +1,64 @@
 import random
 
-random.seed(1)
-RESOLUTION = COLUMNS, ROWS = 10, 10
+class WFC:
+    def __init__(self, width: int, height: int, seed = None):
+        self.resolution = self.width, self.height = width, height
+        self.grid = [[[] for _ in range(self.width)] for _ in range(self.height)]
+        self.rule_sockets = {}
 
-grid = [[[] for _ in range(ROWS)] for _ in range(COLUMNS)]
+        if seed:
+            random.seed = seed
 
-rule_sockets = {
-    "blank": {
-        "0 1": 0,
-        "1 0": 0,
-        "0 -1": 0,
-        "-1 0": 0
-    },
-    
-    "top": {
-        "0 1": 1,
-        "1 0": 1,
-        "0 -1": 0,
-        "-1 0": 1
-    },
-    
-    "left": {
-        "0 1": 1,
-        "1 0": 0,
-        "0 -1": 1,
-        "-1 0": 1
-    },
-    
-    "bot": {
-        "0 1": 0,
-        "1 0": 1,
-        "0 -1": 1,
-        "-1 0": 1
-    },
-    
-    "right": {
-        "0 1": 1,
-        "1 0": 1,
-        "0 -1": 1,
-        "-1 0": 0
-    }
-}
+    def assign_rules(self, name: str, sockets: dict) -> None:
+        self.rule_sockets[name] = sockets
 
-for x, col in enumerate(grid):
-    for y, i in enumerate(col):
-        grid[x][y] = ["blank", "top", "right", "bot", "left"]
-
-def choose_lowest(grid):
-    lowest = 6
-    coors = []
-    
-    # Find lowest probability
-    
-    for x, col in enumerate(grid):
-        for y, i in enumerate(col):
-            if type(i) != list:
-                continue
-            
-            if len(i) < 1:
-                raise ValueError(f"Element ({x}, {y}) reached 0 possible states")
-            
-            if lowest > len(i):
-                coors = []
-                coors.append((x, y))
-                lowest = len(i)
-            elif lowest == len(i):
-                coors.append((x, y))
-    
-    # choose a random out of the lowest ones
-    
-    if coors == []:
-        return None
-    
-    return random.choice(coors)
-
-while True:
-    # collapse random cell with lowest chances
-    try:
-        collapsing_x, collapsing_y = choose_lowest(grid)
-    except:
-        break
-    
-    grid[collapsing_x][collapsing_y] = random.choice(grid[collapsing_x][collapsing_y])
-    
-    # compute new wave function for other neighboring cells
-    for k, socket in rule_sockets[grid[collapsing_x][collapsing_y]].items():
-        relative_x = int(k.split(" ")[0])
-        relative_y = int(k.split(" ")[1])
+    def generate_grid(self):
+        # Assign everry element to the grid
+        for y, row in enumerate(self.grid):
+            for x, _ in enumerate(row):
+                self.grid[y][x] = [element for element in self.rule_sockets]
         
-        # get new coordinates
-        x = relative_x + collapsing_x
-        y = relative_y + collapsing_y
-        
-        # check if neighbor cell is outside grid or is already collapsed
-        if COLUMNS <= x or x < 0 or ROWS <= y or y < 0 or type(grid[x][y]) != list:
-            continue
-        
-        # remove conflicting elements
-        grid[x][y][:] = [element for element in grid[x][y] if rule_sockets[element][f"{-relative_x} {-relative_y}"] == socket]
+        while True:
+            try:
+                collapsing_y, collapsing_x = self.choose_lowest()
+            except:
+                break
 
-for col in grid:
-    print(*col, sep="\t")
+            self.grid[collapsing_y][collapsing_x] = random.choice(self.grid[collapsing_y][collapsing_x])
+
+            for k, socket in self.rule_sockets[self.grid[collapsing_y][collapsing_x]].items():
+                relative_y = int(k.split(" ")[0])
+                relative_x = int(k.split(" ")[1])
+
+                x = relative_x + collapsing_x
+                y = relative_y + collapsing_y
+
+                if self.width <= x or x < 0 or self.height <= y or  y < 0 or type(self.grid[y][x]) != list:
+                    continue
+
+                self.grid[y][x][:] = [element for element in self.grid[y][x] if self.rule_sockets[element][f"{-relative_y} {-relative_x}"] == socket]
+
+        return self.grid
+
+    def choose_lowest(self):
+        lowest = len(self.rule_sockets) + 1
+        coors = []
+
+        for y, row in enumerate(self.grid):
+            for x, cell in enumerate(row):
+                if type(cell) != list:
+                    continue
+
+                if len(cell) < 1:
+                    raise ValueError
+                
+                if lowest > len(cell):
+                    coors = []
+                    coors.append((y, x))
+                    lowest = len(cell)
+                elif lowest == len(cell):
+                    coors.append((y, x))
+        if coors == []:
+            return None
+        
+        return random.choice(coors)
