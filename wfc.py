@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import random
 
 class WFC:
@@ -55,7 +56,7 @@ class WFC:
             for x, _ in enumerate(row):
                 self.grid[y][x] = [element for element in self.rules]
         
-        while True:
+        for _ in tqdm(range(self.width * self.height)):
             
             # Get lowest entropy cell, or return if grid has been collapsed
             

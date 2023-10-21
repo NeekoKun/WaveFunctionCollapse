@@ -10,7 +10,6 @@ pygame.display.init()
 screen = pygame.display.set_mode(SIZE)
 
 wfc = WFC(100, 100)
-random.seed(0)
 
 mountain_color = (31, 45, 45)
 forest_color = (0, 102, 0)
@@ -23,6 +22,7 @@ wfc.assign_rules("mountain", ["mountain", "forest"])
 wfc.assign_rules("forest", ["mountain", "forest", "beach"])
 wfc.assign_rules("beach", ["forest", "beach", "sea"])
 wfc.assign_rules("sea", ["beach", "sea"])
+
 
 grid = wfc.generate_grid()
 
