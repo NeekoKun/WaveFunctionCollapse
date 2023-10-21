@@ -9,8 +9,13 @@ sprites_width, sprites_height = 100, 100
 pygame.display.init()
 screen = pygame.display.set_mode(SIZE)
 
-wfc = WFC(7, 7)
+wfc = WFC(100, 100)
 random.seed(0)
+
+mountain_color = (31, 45, 45)
+forest_color = (0, 102, 0)
+beach_color = (255, 204, 0)
+sea_color = (0, 102, 255)
 
 wfc.set_mode("adjacency")
 
@@ -21,12 +26,6 @@ wfc.assign_rules("sea", ["beach", "sea"])
 
 grid = wfc.generate_grid()
 
-sprites = {}
-sprites["mountain"] = pygame.image.load("sprites/mountain.png")
-sprites["forest"] = pygame.image.load("sprites/forest.png")
-sprites["beach"] = pygame.image.load("sprites/beach.png")
-sprites["sea"] = pygame.image.load("sprites/sea.png")
-
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -36,6 +35,19 @@ while True:
     
     for y, row in enumerate(grid):
         for x, i in enumerate(row):
-            screen.blit(sprites[i], (x*sprites_width, y*sprites_height))
+            match i:
+                case "mountain":
+                    pygame.draw.rect(screen, mountain_color, (y*7, x*7, 7, 7))
+                case "forest":
+                    pygame.draw.rect(screen, forest_color, (y*7, x*7, 7, 7))
+                    pass
+                case "beach":
+                    pygame.draw.rect(screen, beach_color, (y*7, x*7, 7, 7))
+                    pass
+                case "sea":
+                    pygame.draw.rect(screen, sea_color, (y*7, x*7, 7, 7))
+                    pass
+                case _:
+                    pass
     
     pygame.display.flip()
