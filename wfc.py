@@ -8,7 +8,7 @@ class WFC:
         self.rules = {}
 
     def set_mode(self, mode: str) -> None:
-        if mode not in ["adjacency", "sockets"]:
+        if mode not in ["adjacency", "sockets", "balanced_adjacency"]:
             raise ValueError("Invalid Mode: {}".format(mode))
         self.mode = mode
         
@@ -47,6 +47,9 @@ class WFC:
             if collapsing_x+1 < self.width and type(self.grid[collapsing_y][collapsing_x+1]) == list:
                 self.grid[collapsing_y][collapsing_x+1][:] = [element for element in self.grid[collapsing_y][collapsing_x+1] if element in self.rules[self.grid[collapsing_y][collapsing_x]]]
 
+    def balanced_adjacency_collapse(self, collapsing_y, collapsing_x):
+        pass
+
     def generate_grid(self):
         if not hasattr(self, 'mode'):
             raise ValueError("Rule book mod not set")
@@ -74,7 +77,6 @@ class WFC:
                 case "adjacency":
                     self.adjacency_collapse(collapsing_y, collapsing_x)
                 case "balanced_adjacency":
-                    raise ValueError("Mode {} not implemented".format(self.mode))
                     self.balanced_adjacency_collapse(collapsing_y, collapsing_x)
                 case _:
                     raise ValueError("Mode {} not implemented".format(self.mode))
