@@ -16,7 +16,7 @@ forest_color = (0, 102, 0)
 beach_color = (255, 204, 0)
 sea_color = (0, 102, 255)
 
-wfc.set_mode("adjacency")
+wfc.set_mode("balanced_adjacency")
 
 wfc.assign_rules("mountain", ["mountain", "forest"])
 wfc.assign_rules("forest", ["mountain", "forest", "beach"])

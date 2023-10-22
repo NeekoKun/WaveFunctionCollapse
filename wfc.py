@@ -47,9 +47,6 @@ class WFC:
             if collapsing_x+1 < self.width and type(self.grid[collapsing_y][collapsing_x+1]) == list:
                 self.grid[collapsing_y][collapsing_x+1][:] = [element for element in self.grid[collapsing_y][collapsing_x+1] if element in self.rules[self.grid[collapsing_y][collapsing_x]]]
 
-    def balanced_adjacency_collapse(self, collapsing_y, collapsing_x):
-        pass
-
     def generate_grid(self):
         if not hasattr(self, 'mode'):
             raise ValueError("Rule book mod not set")
@@ -69,7 +66,24 @@ class WFC:
                 break
 
             # Collapse cell
-            self.grid[collapsing_y][collapsing_x] = random.choice(self.grid[collapsing_y][collapsing_x])
+            if self.mode == "balanced_adjacency":
+                possibilities = self.grid[collapsing_y][collapsing_x]
+                
+                if collapsing_y-1 >= 0 and type(self.grid[collapsing_y-1][collapsing_x]) != list and self.grid[collapsing_y-1][collapsing_x] in possibilities:
+                    possibilities.append(self.grid[collapsing_y-1][collapsing_x])
+                
+                if collapsing_y+1 < self.height and type(self.grid[collapsing_y+1][collapsing_x]) != list and self.grid[collapsing_y+1][collapsing_x] in possibilities:
+                    possibilities.append(self.grid[collapsing_y+1][collapsing_x])
+                
+                if collapsing_x-1 >= 0 and type(self.grid[collapsing_y][collapsing_x-1]) != list and self.grid[collapsing_y][collapsing_x-1] in possibilities:
+                    possibilities.append(self.grid[collapsing_y][collapsing_x-1])
+                
+                if collapsing_x+1 < self.width and type(self.grid[collapsing_y][collapsing_x+1]) != list and self.grid[collapsing_y][collapsing_x+1] in possibilities:
+                    possibilities.append(self.grid[collapsing_y][collapsing_x+1])
+                
+                self.grid[collapsing_y][collapsing_x] = random.choice(possibilities)
+            else:
+                self.grid[collapsing_y][collapsing_x] = random.choice(self.grid[collapsing_y][collapsing_x])
 
             match self.mode:
                 case "sockets":
@@ -77,7 +91,7 @@ class WFC:
                 case "adjacency":
                     self.adjacency_collapse(collapsing_y, collapsing_x)
                 case "balanced_adjacency":
-                    self.balanced_adjacency_collapse(collapsing_y, collapsing_x)
+                    self.adjacency_collapse(collapsing_y, collapsing_x)
                 case _:
                     raise ValueError("Mode {} not implemented".format(self.mode))
 
